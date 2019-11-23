@@ -207,4 +207,19 @@ module.exports = (app) => {
 			res.status(400).send({ message: 'error occured' });
 		}
 	});
+
+	app.get('/user', async (req, res) => {
+		const { utorid, hashedPassword } = req.body;
+		const user = await User.findOne({ utorid: utorid });
+
+		if (user) {
+			if (user.password === hashedPassword) {
+				res.status(200).send(user);
+			} else {
+				res.status(400).send({ error: 'nah bro' });
+			}
+		} else {
+			res.status(400).send({ error: 'nah bro' });
+		}
+	});
 };
