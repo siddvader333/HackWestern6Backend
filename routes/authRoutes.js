@@ -40,8 +40,11 @@ module.exports = (app) => {
 		const [ button ] = await page.$x("//button[contains(., 'log in')]");
 		if (button) {
 			await button.click();
-			await delay(2000);
-			if (page.url() === 'https://acorn.utoronto.ca/sws/welcome.do?welcome.dispatch#/') {
+			await page.waitForNavigation({ waitUntil: 'networkidle0' });
+			if (
+				page.url() === 'https://acorn.utoronto.ca/sws/welcome.do?welcome.dispatch#/' ||
+				page.url() === 'https://acorn.utoronto.ca/sws/welcome.do?welcome.dispatch/'
+			) {
 				return true;
 			}
 		}
@@ -73,7 +76,7 @@ module.exports = (app) => {
 		const [ button ] = await page.$x("//button[contains(., 'log in')]");
 		if (button) {
 			await button.click();
-			await delay(2000);
+			await page.waitForNavigation({ waitUntil: 'networkidle0' });
 			/*if (page.url() !== 'https://acorn.utoronto.ca/sws/welcome.do?welcome.dispatch#/') {
 				return [];
 			}*/

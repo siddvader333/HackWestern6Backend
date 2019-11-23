@@ -16,6 +16,10 @@ const UserQuestDataSchema = new mongoose.Schema({
 	gold: {
 		type: Number,
 		default: 0
+	},
+	inventory: {
+		type: [ Object ],
+		default: []
 	}
 });
 
