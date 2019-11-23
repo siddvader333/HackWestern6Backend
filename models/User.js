@@ -27,8 +27,7 @@ const UserSchema = new mongoose.Schema({
 		required: true
 	},
 	questData: {
-		type: UserQuestDataSchema,
-		required: true
+		type: UserQuestDataSchema
 	}
 });
 

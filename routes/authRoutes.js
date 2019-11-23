@@ -86,5 +86,30 @@ module.exports = (app) => {
 		}
 	});
 
-	app.post('/register', async (req, res) => {});
+	app.post('/register', async (req, res) => {
+		const { utorid, password, age, name, phone, discipline } = req.body;
+
+		const newUser = new User({
+			utorid: utorid,
+			password: password,
+			preferredName: name,
+			age: age,
+			discipline: discipline,
+			phone: phone,
+			questData: {}
+		});
+
+		bcrypt.genSalt(10, (err, salt) => {
+			bcrypt.hash(newUser.password, salt, (err, hash) => {
+				if (err) {
+					console.log(err);
+					res.send(400).send({ message: 'error occurred' });
+				}
+				newUser.password = hash;
+				newUser.save();
+			});
+		});
+
+		res.status(200).send({ message: 'Registered!' });
+	});
 };
