@@ -1,44 +1,19 @@
 module.exports = (app) => {
+	const bcrypt = require('bcryptjs');
+	const puppeteer = require('puppeteer');
+	// Load User model
+	const User = require('../models/User');
+
 	function delay(time) {
 		return new Promise(function(resolve) {
 			setTimeout(resolve, time);
 		});
 	}
-	const bcrypt = require('bcryptjs');
-	const puppeteer = require('puppeteer');
 
-	//login route --> return userInformation
-	app.post('/login', (req, res) => {
-		//check if the user already exists in mongodb
-		passport.authenticate('local', {
-			successRedirect: '/login_success',
-			failureRedirect: '/login_failure'
-		})(req, res);
-	});
+	//utoronto credentials verification function--> includes webscraper
 
-	app.get('/login_success', (req, res) => {
-		const response = { loginStatus: true, errorMessage: 'No Errors found!, return the user data here' };
-		res.send(response);
-	});
-
-	app.get('/login_failure', (req, res) => {
-		const { utorid, password } = req.body;
-		//2 cases, either a user isnt registered yet, or invalid user/pass combo
-
-		//check for user/pass combo
-		const response = { registerStatus: false, errorMessage: 'An error occured. Make sure login info is correct.' };
-
-		res.send(response);
-	});
-
-	//register route --> create new User and Scrape acorn for info --> invoke login route
-
-	//utoronto credentials verification route--> includes webscraper
-	app.post('/validate-ut-credentials', async (req, res) => {
-		const { utorid, password } = req.body;
-		const response = { status: false };
+	async function validateCredentials(utorid, password) {
 		//run webscraper to check if valid
-
 		const browser = await puppeteer.launch(); // default is true
 		const page = await browser.newPage();
 		await page.goto('https://www.acorn.utoronto.ca/', {
@@ -67,10 +42,49 @@ module.exports = (app) => {
 			await button.click();
 			await delay(2000);
 			if (page.url() === 'https://acorn.utoronto.ca/sws/welcome.do?welcome.dispatch#/') {
-				response.status = true;
+				return true;
 			}
 		}
+		return false;
+	}
 
-		res.send(response);
+	//login route --> return userInformation
+	app.post('/login', async (req, res) => {
+		const { utorid, password } = req.body;
+		//check if user exists in mongodb
+		const user = await User.findOne({ utorid: utorid });
+
+		if (user) {
+			//user exists, check password
+			const passwordValid = bcrypt.compare(password, user.password, (err, isMatch) => {
+				if (err) throw err;
+				if (isMatch) {
+					return true;
+				} else {
+					return false;
+				}
+			});
+			if (passwordValid) {
+				//password correct
+				//return user information here
+				res.status(200).send(user);
+			} else {
+				//password incorrect
+				res.status(400).send({ error: 'Invalid Password!' });
+			}
+		} else {
+			//user doesn't exist
+			//check if utorid/pass is valid
+			const credentialsValid = await validateCredentials(utorid, password);
+			if (credentialsValid) {
+				//indicate to frontend to redirect to register
+				res.status(200).send({ message: 'Need to register user' });
+			} else {
+				//invalid credentials
+				res.status(400).send({ error: 'Invalid Credentials!' });
+			}
+		}
 	});
+
+	app.post('/register', async (req, res) => {});
 };
