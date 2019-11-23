@@ -28,6 +28,10 @@ const UserSchema = new mongoose.Schema({
 	},
 	questData: {
 		type: UserQuestDataSchema
+	},
+	schedule: {
+		type: [ [ Object ] ],
+		required: true
 	}
 });
 
