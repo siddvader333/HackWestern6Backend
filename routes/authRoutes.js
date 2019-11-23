@@ -53,17 +53,9 @@ module.exports = (app) => {
 		const { utorid, password } = req.body;
 		//check if user exists in mongodb
 		const user = await User.findOne({ utorid: utorid });
-
 		if (user) {
 			//user exists, check password
-			const passwordValid = bcrypt.compare(password, user.password, (err, isMatch) => {
-				if (err) throw err;
-				if (isMatch) {
-					return true;
-				} else {
-					return false;
-				}
-			});
+			const passwordValid = await bcrypt.compare(password, user.password);
 			if (passwordValid) {
 				//password correct
 				//return user information here
