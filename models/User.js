@@ -32,6 +32,10 @@ const UserSchema = new mongoose.Schema({
 	schedule: {
 		type: [ [ Object ] ],
 		required: true
+	},
+	completedMorningTasks: {
+		type: Boolean,
+		default: false
 	}
 });
 

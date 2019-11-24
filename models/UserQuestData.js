@@ -1,4 +1,6 @@
 const mongoose = require('mongoose');
+const InventoryItemSchema = require('./InventoryItem.js');
+const AsteroidSchema = require('./Asteroid.js');
 
 const UserQuestDataSchema = new mongoose.Schema({
 	daysOnQuest: {
@@ -18,7 +20,15 @@ const UserQuestDataSchema = new mongoose.Schema({
 		default: 0
 	},
 	inventory: {
-		type: [ Object ],
+		type: [ InventoryItemSchema ],
+		default: []
+	},
+	asteroidsDetroyed: {
+		type: [ AsteroidSchema ],
+		default: []
+	},
+	asteroidsRemaining: {
+		type: [ AsteroidSchema ],
 		default: []
 	}
 });
