@@ -36,7 +36,7 @@ module.exports = (app) => {
 		}
 	});
 
-	app.get('/addGold', async (req, res) => {
+	app.post('/addGold', async (req, res) => {
 		const { utorid, goldToAdd } = req.body;
 		const user = await User.findOne({ utorid: utorid });
 		if (user) {
