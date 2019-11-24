@@ -112,6 +112,7 @@ module.exports = (app) => {
 			obj.section = terms[1];
 			obj.time = terms[2];
 			obj.location = terms[3];
+			obj.status = 'incomplete';
 			result.push(obj);
 		});
 
@@ -208,7 +209,7 @@ module.exports = (app) => {
 		}
 	});
 
-	app.get('/user', async (req, res) => {
+	app.post('/user', async (req, res) => {
 		const { utorid, hashedPassword } = req.body;
 		const user = await User.findOne({ utorid: utorid });
 

@@ -12,6 +12,8 @@ module.exports = (app) => {
 		if (user) {
 			const newQuestData = user.questData;
 			newQuestData.asteroidsRemaining.push(newAsteroid);
+			console.log(newAsteroid);
+			console.log(newQuestData);
 			await User.findOneAndUpdate({ utorid: utorid }, { questData: newQuestData });
 			res.status(200).send({ message: 'yeet it worked' });
 		} else {
