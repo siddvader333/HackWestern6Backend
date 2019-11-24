@@ -16,6 +16,7 @@ app.use(bodyParser.json());
 app.get('/', (req, res) => res.send('Hello World!'));
 
 require('./routes/authRoutes')(app);
+require('./routes/asteroidRoutes')(app);
 require('./routes/gcpRoutes')(app);
 require('./routes/inventoryRoutes')(app);
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));
