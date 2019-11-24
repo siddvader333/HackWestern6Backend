@@ -28,4 +28,15 @@ module.exports = (app) => {
 			}
 		}
 	});
+
+	app.post('/completeMorningTasks', async (req, res) => {
+		const { utorid } = req.body;
+		const user = await User.findOne({ utorid: utorid });
+		if (user) {
+			await User.findOneAndUpdate({ utorid: utorid }, { completedMorningTasks: true });
+			res.status(200).send({ message: 'yeet' });
+		} else {
+			res.status(400).send({ error: 'boooo :(' });
+		}
+	});
 };
